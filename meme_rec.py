@@ -23,12 +23,15 @@ while 1:
             mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS)
             for id, lm in enumerate(handsl.landmark):
                 cx, cy = int(lm.x * width), int(lm.y * height)
-                print(id, cx, cy)
                 if id == 4 or id == 8:
-                    cv2.circle(img, (cx, cy), 15, (255,0,0), cv2.FILLED)
+                    #cv2.circle(img, (cx, cy), 15, (255,0,0), cv2.FILLED)
                     axisX[id] = cx
                     axisY[id] = cy
-                    
+                    print(id, cx, cy)
+    if (axisX[4] <= axisX[8]+6 and axisX[4] >= axisX[8]-6) and axisX[4] != 0 and (axisY[4] <= axisY[8]+6 and axisY[4] >= axisY[8]-6) and axisY[4] != 0:               
+        meme1 = "Gallery/meme1.png"
+        img_meme1 = cv2.imread(meme1)
+        cv2.imshow("Meme 1", img_meme1)
 
     cv2.imshow("Video", img)
     k = cv2.waitKey(1)
