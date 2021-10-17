@@ -1,2 +1,2 @@
-# Meme_Recognition
+# Meme Recognition
 Meme Recogniton using OpenCV.
