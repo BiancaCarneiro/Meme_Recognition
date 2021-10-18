@@ -11,7 +11,7 @@ axisX = np.zeros(21)
 axisY = np.zeros(21)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 
-def calculate_finger_angle(array):
+def calculate_finger_angle(array, id):
     #At first, lets find the equations ax+by+c=0
     #print(axisY[int(array[0])])
     a1 = axisY[array[0]] - axisY[array[1]]
@@ -23,16 +23,26 @@ def calculate_finger_angle(array):
     tgangle = abs((m1-m2)/(1+m1*m2))
     #print(tgangle)
     angle = np.tan(tgangle)
-    angle = angle*(180)/(pi) 
-    print(angle)
+    angle = abs(angle*(180)/(pi))
+    #print(angle)
+    if id == 3 or id == 4:
+        print(angle, id)
     return angle
 
 def meme1():
     if (axisX[4] <= axisX[8]+8 and axisX[4] >= axisX[8]-8) and axisX[4] != 0 and (axisY[4] <= axisY[8]+8 and axisY[4] >= axisY[8]-8) and axisY[4] != 0:
-        if calculate_finger_angle(fingers[2]) < 20 and calculate_finger_angle(fingers[3]) < 20 and calculate_finger_angle(fingers[4]) < 20:
-            meme1 = "Gallery/meme1.png"
-            img_meme1 = cv2.imread(meme1)
-            cv2.imshow("Meme", img_meme1)
+        if calculate_finger_angle(fingers[2], 2) < 20 and calculate_finger_angle(fingers[3], 3) < 20 and calculate_finger_angle(fingers[4], 4) < 20:
+            meme = "Gallery/meme1.png"
+            img_meme = cv2.imread(meme)
+            cv2.imshow("Meme", img_meme)
+
+def meme2():
+    if calculate_finger_angle(fingers[1], 1) < 20 and calculate_finger_angle(fingers[2], 2) < 20:#Checks if the index finger and the middle finger are up
+        if calculate_finger_angle(fingers[3], 3) > 70 and calculate_finger_angle(fingers[4], 4) > 70:
+            meme = "Gallery/meme2.png"
+            img_meme = cv2.imread(meme)
+            cv2.imshow("Meme", img_meme)
+
 
 def main():
     while 1:
@@ -52,6 +62,7 @@ def main():
                     axisX[id] = cx
                     axisY[id] = cy
             meme1()
+            meme2()
         cv2.imshow("Video", img)
         k = cv2.waitKey(1)
         if k%256 == 27: # Leaves with ESC
