@@ -30,7 +30,7 @@ def calculate_finger_angle(array, id):
     return angle
 
 def meme1():
-    if (axisX[4] <= axisX[8]+8 and axisX[4] >= axisX[8]-8) and axisX[4] != 0 and (axisY[4] <= axisY[8]+8 and axisY[4] >= axisY[8]-8) and axisY[4] != 0:
+    if (axisX[4] <= axisX[8]+9 and axisX[4] >= axisX[8]-9) and axisX[4] != 0 and (axisY[4] <= axisY[8]+10 and axisY[4] >= axisY[8]-10) and axisY[4] != 0:
         if calculate_finger_angle(fingers[2], 2) < 20 and calculate_finger_angle(fingers[3], 3) < 20 and calculate_finger_angle(fingers[4], 4) < 20:
             meme = "Gallery/meme1.png"
             img_meme = cv2.imread(meme)
@@ -38,7 +38,7 @@ def meme1():
 
 def meme2():
     if calculate_finger_angle(fingers[1], 1) < 20 and calculate_finger_angle(fingers[2], 2) < 20:#Checks if the index finger and the middle finger are up
-        if calculate_finger_angle(fingers[3], 3) > 70 and calculate_finger_angle(fingers[4], 4) > 70:
+        if calculate_finger_angle(fingers[3], 3) > 100 and calculate_finger_angle(fingers[4], 4) > 100:
             meme = "Gallery/meme2.png"
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
