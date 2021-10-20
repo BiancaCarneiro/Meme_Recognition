@@ -10,15 +10,16 @@ mpdraw =  mp.solutions.drawing_utils
 axisX = np.zeros(21)
 axisY = np.zeros(21)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
+mp_drawing_styles = mp.solutions.drawing_styles
 
 def calculate_finger_angle(array, id):
     #At first, lets find the equations ax+by+c=0
     #print(axisY[int(array[0])])
-    a1 = axisY[array[0]] - axisY[array[1]]
-    b1 = axisX[array[0]] - axisX[array[1]]
+    b1 = axisY[array[0]] - axisY[array[1]]
+    a1 = axisX[array[0]] - axisX[array[1]]
     m1 = -a1/b1
-    a2 = axisY[array[1]] - axisY[array[2]]
-    b2 = axisX[array[1]] - axisX[array[2]]
+    b2 = axisY[array[1]] - axisY[array[2]]
+    a2 = axisX[array[1]] - axisX[array[2]]
     m2 = -a2/b2
     tgangle = abs((m1-m2)/(1+m1*m2))
     #print(tgangle)
@@ -56,7 +57,7 @@ def main():
         #print(results.multi_hand_landmarks)
         if results.multi_hand_landmarks:
             for handsl in results.multi_hand_landmarks:
-                mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS)
+                mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS, mp_drawing_styles.get_default_hand_landmarks_style(), mp_drawing_styles.get_default_hand_connections_style())
                 for id, lm in enumerate(handsl.landmark):
                     cx, cy = int(lm.x * width), int(lm.y * height)
                     axisX[id] = cx
