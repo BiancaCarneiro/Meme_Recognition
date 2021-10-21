@@ -7,19 +7,21 @@ cam = cv2.VideoCapture(0)
 mphands = mp.solutions.hands
 hands = mphands.Hands()
 mpdraw =  mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_dace_detection = mp.solutions.face_detection
+face = mp_dace_detection.FaceDetection()
 axisX = np.zeros(21)
 axisY = np.zeros(21)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
-mp_drawing_styles = mp.solutions.drawing_styles
 
 def calculate_finger_angle(array, id):
     #At first, lets find the equations ax+by+c=0
     #print(axisY[int(array[0])])
-    b1 = axisY[array[0]] - axisY[array[1]]
-    a1 = axisX[array[0]] - axisX[array[1]]
+    a1 = abs(axisY[array[0]] - axisY[array[1]])
+    b1 = abs(axisX[array[0]] - axisX[array[1]])
     m1 = -a1/b1
-    b2 = axisY[array[1]] - axisY[array[2]]
-    a2 = axisX[array[1]] - axisX[array[2]]
+    a2 = abs(axisY[array[1]] - axisY[array[2]])
+    b2 = abs(axisX[array[1]] - axisX[array[2]])
     m2 = -a2/b2
     tgangle = abs((m1-m2)/(1+m1*m2))
     #print(tgangle)
@@ -27,20 +29,29 @@ def calculate_finger_angle(array, id):
     angle = abs(angle*(180)/(pi))
     #print(angle)
     if id == 3 or id == 4:
-        print(angle, id)
+        print(angle, id)      
+    
     return angle
 
-def meme1():
+def meme1(): # frog
     if (axisX[4] <= axisX[8]+9 and axisX[4] >= axisX[8]-9) and axisX[4] != 0 and (axisY[4] <= axisY[8]+10 and axisY[4] >= axisY[8]-10) and axisY[4] != 0:
         if calculate_finger_angle(fingers[2], 2) < 20 and calculate_finger_angle(fingers[3], 3) < 20 and calculate_finger_angle(fingers[4], 4) < 20:
             meme = "Gallery/meme1.png"
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
 
-def meme2():
-    if calculate_finger_angle(fingers[1], 1) < 20 and calculate_finger_angle(fingers[2], 2) < 20:#Checks if the index finger and the middle finger are up
-        if calculate_finger_angle(fingers[3], 3) > 100 and calculate_finger_angle(fingers[4], 4) > 100:
-            meme = "Gallery/meme2.png"
+def meme2and3(): # billie
+    if calculate_finger_angle(fingers[1], 1) < 20 and calculate_finger_angle(fingers[2], 2) < 20:#Checks if the index finger and the middle finger are straight
+        if calculate_finger_angle(fingers[3], 3) > 100 and calculate_finger_angle(fingers[4], 4) > 100: # checks if the others are curved
+            print(axisY[5], "5", axisY[8], "8")
+            if axisY[8] > axisY[5] and axisY[12] > axisY[9]: # checks if the finger is down
+                meme = "Gallery/meme3.png"    
+            else: 
+                meme = "Gallery/meme2.png" 
+            img_meme = cv2.imread(meme)
+            cv2.imshow("Meme", img_meme)
+        elif axisY[8] > axisY[5] and axisY[12] > axisY[9]:
+            meme = "Gallery/meme3.png"
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
 
@@ -63,7 +74,7 @@ def main():
                     axisX[id] = cx
                     axisY[id] = cy
             meme1()
-            meme2()
+            meme2and3()
         cv2.imshow("Video", img)
         k = cv2.waitKey(1)
         if k%256 == 27: # Leaves with ESC
