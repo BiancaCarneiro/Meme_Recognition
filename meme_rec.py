@@ -40,7 +40,7 @@ def meme1(): # frog
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
 
-def meme2and3(): # billie
+def meme2and3(): # billie and finger down
     if calculate_finger_angle(fingers[1], 1) < 20 and calculate_finger_angle(fingers[2], 2) < 20:#Checks if the index finger and the middle finger are straight
         if calculate_finger_angle(fingers[3], 3) > 100 and calculate_finger_angle(fingers[4], 4) > 100: # checks if the others are curved
             print(axisY[5], "5", axisY[8], "8")
@@ -64,10 +64,11 @@ def main():
             break
         height, width, c = img.shape
         imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        results = hands.process(imgRGB)
+        results_hands = hands.process(imgRGB)
+        results_face = face.process(imgRGB)
         #print(results.multi_hand_landmarks)
-        if results.multi_hand_landmarks:
-            for handsl in results.multi_hand_landmarks:
+        if results_hands.multi_hand_landmarks:
+            for handsl in results_hands.multi_hand_landmarks:
                 mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS, mp_drawing_styles.get_default_hand_landmarks_style(), mp_drawing_styles.get_default_hand_connections_style())
                 for id, lm in enumerate(handsl.landmark):
                     cx, cy = int(lm.x * width), int(lm.y * height)
@@ -75,6 +76,9 @@ def main():
                     axisY[id] = cy
             meme1()
             meme2and3()
+        if results_face.detections:
+            for detec in results_face.detections:
+                mpdraw.draw_detection(img, detec)
         cv2.imshow("Video", img)
         k = cv2.waitKey(1)
         if k%256 == 27: # Leaves with ESC
@@ -84,3 +88,4 @@ def main():
 
 if __name__=='__main__':
     main()
+    cam.release()

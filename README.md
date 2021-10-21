@@ -10,3 +10,5 @@ OpenCV:
 ```
 pip install opencv-python
 ```
+## Mediapipe references
+https://google.github.io/mediapipe/
