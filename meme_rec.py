@@ -8,8 +8,9 @@ mphands = mp.solutions.hands
 hands = mphands.Hands()
 mpdraw =  mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
-mp_dace_detection = mp.solutions.face_detection
-face = mp_dace_detection.FaceDetection()
+drawing_spec = mpdraw.DrawingSpec(thickness=1, circle_radius=1)
+mp_face_mesh = mp.solutions.face_mesh
+face = mp_face_mesh.FaceMesh()
 axisX = np.zeros(21)
 axisY = np.zeros(21)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
@@ -76,9 +77,14 @@ def main():
                     axisY[id] = cy
             meme1()
             meme2and3()
-        if results_face.detections:
-            for detec in results_face.detections:
-                mpdraw.draw_detection(img, detec)
+        if results_face.multi_face_landmarks:
+            for face_landmarks in results_face.multi_face_landmarks:
+                mpdraw.draw_landmarks(
+                    image=img,
+                    landmark_list=face_landmarks,
+                    connections=mp_face_mesh.FACEMESH_CONTOURS,
+                    landmark_drawing_spec=None,
+                    connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_contours_style())
         cv2.imshow("Video", img)
         k = cv2.waitKey(1)
         if k%256 == 27: # Leaves with ESC
