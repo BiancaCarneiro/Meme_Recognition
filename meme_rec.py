@@ -16,14 +16,18 @@ pose = mp_pose.Pose()
 axisX = np.zeros(21)
 axisY = np.zeros(21)
 axisZ = np.zeros(21)
+pose_axisX = np.zeros(33)
+pose_axisY = np.zeros(33)
+pose_axisZ = np.zeros(33)
 #face_axisX = np.zeros(4)
 #face_axisY = np.zeros(4)
 #face_axisZ = np.zeros(4)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
+arms =  np.array([[12, 14, 16], [12, 14, 16]])
 #fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 
 
-def calculate_finger_angle(array, id):
+def calculate_finger_angle(array, id, axisX, axisY, axisZ):
     #At first, lets find the equations ax+by+c=0
     #print(axisY[int(array[0])])
     vectorAB = np.array([axisX[array[0]] - axisX[array[1]], axisY[array[0]] - axisY[array[1]], axisZ[array[0]] - axisZ[array[1]]])
@@ -41,14 +45,14 @@ def calculate_finger_angle(array, id):
 
 def meme1(): # frog
     if (axisX[4] <= axisX[8]+9 and axisX[4] >= axisX[8]-9) and axisX[4] != 0 and (axisY[4] <= axisY[8]+10 and axisY[4] >= axisY[8]-10) and axisY[4] != 0:
-        if calculate_finger_angle(fingers[2], 2) < 20 and calculate_finger_angle(fingers[3], 3) < 20 and calculate_finger_angle(fingers[4], 4) < 20:
+        if calculate_finger_angle(fingers[2], 2, axisX, axisY, axisZ) < 20 and calculate_finger_angle(fingers[3], 3, axisX, axisY, axisZ) < 20 and calculate_finger_angle(fingers[4], 4, axisX, axisY, axisZ) < 20:
             meme = "Gallery/meme1.png"
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
 
 def meme2and3(): # billie and finger down
-    if calculate_finger_angle(fingers[1], 1) < 20 and calculate_finger_angle(fingers[2], 2) < 20:#Checks if the index finger and the middle finger are straight
-        if calculate_finger_angle(fingers[3], 3) > 100 and calculate_finger_angle(fingers[4], 4) > 100: # checks if the others are curved
+    if calculate_finger_angle(fingers[1], 1, axisX, axisY, axisZ) < 20 and calculate_finger_angle(fingers[2], 2, axisX, axisY, axisZ) < 20:#Checks if the index finger and the middle finger are straight
+        if calculate_finger_angle(fingers[3], 3, axisX, axisY, axisZ) > 100 and calculate_finger_angle(fingers[4], 4, axisX, axisY, axisZ) > 100: # checks if the others are curved
             print(axisY[5], "5", axisY[8], "8")
             if axisY[8] > axisY[5] and axisY[12] > axisY[9]: # checks if the finger is down
                 meme = "Gallery/meme3.png"    
@@ -63,12 +67,6 @@ def meme4():
         img_meme = cv2.imread(meme)
         cv2.imshow("Meme", img_meme)
 
-def store_landmarks(x, y, z, width, height, id):
-    cx, cy, cz = int(x * width), int(y * height), int(z)
-    face_axisX[id] = cx
-    face_axisY[id] = cy
-    face_axisZ[id] = cz
-
 def main():
     while 1:
         success, img = cam.read()
@@ -76,34 +74,21 @@ def main():
             print("Failed")
             break
         height, width, c = img.shape
+
         img.flags.writeable = False
         imgBGR = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results_hands = hands.process(imgBGR)
-        #results_face = face.process(imgBGR)
         results_pose = pose.process(imgBGR)
         img.flags.writeable = True
+
         #print(results.multi_hand_landmarks)
         if results_pose.pose_landmarks:
             mpdraw.draw_landmarks(img, results_pose.pose_landmarks, mp_pose.POSE_CONNECTIONS, landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
             for id, lm in enumerate(results_pose.pose_landmarks.landmark):
                 cx, cy, cz = int(lm.x * width), int(lm.y * height), int(lm.z)
-        #if results_face.multi_face_landmarks:
-        #    for face_landmarks in results_face.multi_face_landmarks:
-        #        mpdraw.draw_landmarks(
-        #            image=img,
-        #            landmark_list=face_landmarks,
-        #            connections=mp_face_mesh.FACEMESH_CONTOURS,
-        #            landmark_drawing_spec=None,
-        #            connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_contours_style())
-        #        for id, lm in enumerate(face_landmarks.landmark):
-        #            if id == 10:
-        #                store_landmarks(lm.x, lm.y, lm.z, width, height, 0)
-        #            if id == 454:
-        #                store_landmarks(lm.x, lm.y, lm.z, width, height, 1)
-        #            if id == 152:
-        #                store_landmarks(lm.x, lm.y, lm.z, width, height, 2)
-        #            if id == 234:
-        #                store_landmarks(lm.x, lm.y, lm.z, width, height, 3)
+                pose_axisX[id] = cx
+                pose_axisY[id] = cy
+                pose_axisZ[id] = cz
         if results_hands.multi_hand_landmarks:
             for handsl in results_hands.multi_hand_landmarks:
                 mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS, mp_drawing_styles.get_default_hand_landmarks_style(), mp_drawing_styles.get_default_hand_connections_style())
