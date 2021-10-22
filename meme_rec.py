@@ -14,6 +14,9 @@ face = mp_face_mesh.FaceMesh()
 axisX = np.zeros(21)
 axisY = np.zeros(21)
 axisZ = np.zeros(21)
+face_axisX = np.zeros(4)
+face_axisY = np.zeros(4)
+face_axisZ = np.zeros(4)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 #fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 
@@ -52,6 +55,11 @@ def meme2and3(): # billie and finger down
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
 
+def store_landmarks(x, y, z, width, height, id):
+    cx, cy, cz = int(x * width), int(y * height), int(z)
+    face_axisX[id] = cx
+    face_axisY[id] = cy
+    face_axisZ[id] = cz
 
 def main():
     while 1:
@@ -72,6 +80,15 @@ def main():
                     connections=mp_face_mesh.FACEMESH_CONTOURS,
                     landmark_drawing_spec=None,
                     connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_contours_style())
+                for id, lm in enumerate(face_landmarks.landmark):
+                    if id == 10:
+                        store_landmarks(lm.x, lm.y, lm.z, width, height, 0)
+                    if id == 454:
+                        store_landmarks(lm.x, lm.y, lm.z, width, height, 1)
+                    if id == 152:
+                        store_landmarks(lm.x, lm.y, lm.z, width, height, 2)
+                    if id == 234:
+                        store_landmarks(lm.x, lm.y, lm.z, width, height, 3)
         if results_hands.multi_hand_landmarks:
             for handsl in results_hands.multi_hand_landmarks:
                 mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS, mp_drawing_styles.get_default_hand_landmarks_style(), mp_drawing_styles.get_default_hand_connections_style())
