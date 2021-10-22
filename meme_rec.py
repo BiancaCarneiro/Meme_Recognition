@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import time
 from math import pi
 
 cam = cv2.VideoCapture(0)
@@ -24,6 +25,7 @@ pose_axisZ = np.zeros(33)
 #face_axisZ = np.zeros(4)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 arms =  np.array([[12, 14, 16], [12, 14, 16]])
+pTime, cTime = 0, 0
 #fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 
 
@@ -68,6 +70,7 @@ def meme4():
         cv2.imshow("Meme", img_meme)
 
 def main():
+    global pTime, cTime
     while 1:
         success, img = cam.read()
         if not success:
@@ -99,12 +102,18 @@ def main():
                     axisZ[id] = cz
             meme1()
             meme2and3()
+               
         
+        cTime = time.time()
+        fps = 1 / (cTime - pTime)
+        pTime = cTime
+    
+        cv2.putText(img, str(int(fps)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3,
+                    (255, 0, 255), 3)
         cv2.imshow("Video", img)
         k = cv2.waitKey(1)
         if k%256 == 27: # Leaves with ESC
             break
-
     cv2.destroyAllWindows()
     cam.release()
 
