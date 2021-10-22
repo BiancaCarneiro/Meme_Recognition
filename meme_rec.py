@@ -9,14 +9,16 @@ hands = mphands.Hands()
 mpdraw =  mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 drawing_spec = mpdraw.DrawingSpec(thickness=1, circle_radius=1)
-mp_face_mesh = mp.solutions.face_mesh
-face = mp_face_mesh.FaceMesh()
+#mp_face_mesh = mp.solutions.face_mesh
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose()
+#face = mp_face_mesh.FaceMesh()
 axisX = np.zeros(21)
 axisY = np.zeros(21)
 axisZ = np.zeros(21)
-face_axisX = np.zeros(4)
-face_axisY = np.zeros(4)
-face_axisZ = np.zeros(4)
+#face_axisX = np.zeros(4)
+#face_axisY = np.zeros(4)
+#face_axisZ = np.zeros(4)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 #fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 
@@ -55,6 +57,12 @@ def meme2and3(): # billie and finger down
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
 
+def meme4():
+    if (axisX[0] > face_axisX[3] and axisX[0] < face_axisX[1]) or (axisX[0] > face_axisX[1] and axisX[0] < face_axisX[0]):
+        meme = "Gallery/meme4.png"
+        img_meme = cv2.imread(meme)
+        cv2.imshow("Meme", img_meme)
+
 def store_landmarks(x, y, z, width, height, id):
     cx, cy, cz = int(x * width), int(y * height), int(z)
     face_axisX[id] = cx
@@ -68,27 +76,34 @@ def main():
             print("Failed")
             break
         height, width, c = img.shape
-        imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        results_hands = hands.process(imgRGB)
-        results_face = face.process(imgRGB)
+        img.flags.writeable = False
+        imgBGR = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        results_hands = hands.process(imgBGR)
+        #results_face = face.process(imgBGR)
+        results_pose = pose.process(imgBGR)
+        img.flags.writeable = True
         #print(results.multi_hand_landmarks)
-        if results_face.multi_face_landmarks:
-            for face_landmarks in results_face.multi_face_landmarks:
-                mpdraw.draw_landmarks(
-                    image=img,
-                    landmark_list=face_landmarks,
-                    connections=mp_face_mesh.FACEMESH_CONTOURS,
-                    landmark_drawing_spec=None,
-                    connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_contours_style())
-                for id, lm in enumerate(face_landmarks.landmark):
-                    if id == 10:
-                        store_landmarks(lm.x, lm.y, lm.z, width, height, 0)
-                    if id == 454:
-                        store_landmarks(lm.x, lm.y, lm.z, width, height, 1)
-                    if id == 152:
-                        store_landmarks(lm.x, lm.y, lm.z, width, height, 2)
-                    if id == 234:
-                        store_landmarks(lm.x, lm.y, lm.z, width, height, 3)
+        if results_pose.pose_landmarks:
+            mpdraw.draw_landmarks(img, results_pose.pose_landmarks, mp_pose.POSE_CONNECTIONS, landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
+            for id, lm in enumerate(results_pose.pose_landmarks.landmark):
+                cx, cy, cz = int(lm.x * width), int(lm.y * height), int(lm.z)
+        #if results_face.multi_face_landmarks:
+        #    for face_landmarks in results_face.multi_face_landmarks:
+        #        mpdraw.draw_landmarks(
+        #            image=img,
+        #            landmark_list=face_landmarks,
+        #            connections=mp_face_mesh.FACEMESH_CONTOURS,
+        #            landmark_drawing_spec=None,
+        #            connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_contours_style())
+        #        for id, lm in enumerate(face_landmarks.landmark):
+        #            if id == 10:
+        #                store_landmarks(lm.x, lm.y, lm.z, width, height, 0)
+        #            if id == 454:
+        #                store_landmarks(lm.x, lm.y, lm.z, width, height, 1)
+        #            if id == 152:
+        #                store_landmarks(lm.x, lm.y, lm.z, width, height, 2)
+        #            if id == 234:
+        #                store_landmarks(lm.x, lm.y, lm.z, width, height, 3)
         if results_hands.multi_hand_landmarks:
             for handsl in results_hands.multi_hand_landmarks:
                 mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS, mp_drawing_styles.get_default_hand_landmarks_style(), mp_drawing_styles.get_default_hand_connections_style())
@@ -106,7 +121,7 @@ def main():
             break
 
     cv2.destroyAllWindows()
+    cam.release()
 
 if __name__=='__main__':
     main()
-    cam.release()
