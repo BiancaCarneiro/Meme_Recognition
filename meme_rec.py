@@ -24,38 +24,38 @@ pose_axisZ = np.zeros(33)
 #face_axisY = np.zeros(4)
 #face_axisZ = np.zeros(4)
 fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
-arms =  np.array([[12, 14, 16], [12, 14, 16]])
+arms =  np.array([[12, 14, 16], [11, 13, 15]])
 pTime, cTime = 0, 0
 #fingers = np.array([[2,3,4],[5,6,8],[9,11,12],[13,15,16],[17,19,20]]) #polegar, indicador, dedo do meio, anelar e midinho
 
 
-def calculate_finger_angle(array, id, axisX, axisY, axisZ):
+def calculate_angle(array, id, x, y, z):
     #At first, lets find the equations ax+by+c=0
     #print(axisY[int(array[0])])
-    vectorAB = np.array([axisX[array[0]] - axisX[array[1]], axisY[array[0]] - axisY[array[1]], axisZ[array[0]] - axisZ[array[1]]])
-    vectorBC = np.array([axisX[array[1]] - axisX[array[2]], axisY[array[1]] - axisY[array[2]], axisZ[array[1]] - axisZ[array[2]]])
+    vectorAB = np.array([x[array[0]] - x[array[1]], y[array[0]] - y[array[1]], z[array[0]] - z[array[1]]])
+    vectorBC = np.array([x[array[1]] - x[array[2]], y[array[1]] - y[array[2]], z[array[1]] - z[array[2]]])
     ABdotBC = np.vdot(vectorAB, vectorBC)
     normAB = np.linalg.norm(vectorAB)
     normBC = np.linalg.norm(vectorBC)
     angle = np.arccos(ABdotBC/(normAB*normBC))
     angle = abs(angle*(180)/(pi))
     #print(angle)
-    if id == 3 or id == 4:
+    if id == 0 or id == 1:
         print(angle, id)      
     
     return angle
 
 def meme1(): # frog
     if (axisX[4] <= axisX[8]+9 and axisX[4] >= axisX[8]-9) and axisX[4] != 0 and (axisY[4] <= axisY[8]+10 and axisY[4] >= axisY[8]-10) and axisY[4] != 0:
-        if calculate_finger_angle(fingers[2], 2, axisX, axisY, axisZ) < 20 and calculate_finger_angle(fingers[3], 3, axisX, axisY, axisZ) < 20 and calculate_finger_angle(fingers[4], 4, axisX, axisY, axisZ) < 20:
+        if calculate_angle(fingers[2], 2, axisX, axisY, axisZ) < 20 and calculate_angle(fingers[3], 3, axisX, axisY, axisZ) < 20 and calculate_angle(fingers[4], 4, axisX, axisY, axisZ) < 20:
             meme = "Gallery/meme1.png"
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
 
 def meme2and3(): # billie and finger down
-    if calculate_finger_angle(fingers[1], 1, axisX, axisY, axisZ) < 20 and calculate_finger_angle(fingers[2], 2, axisX, axisY, axisZ) < 20:#Checks if the index finger and the middle finger are straight
-        if calculate_finger_angle(fingers[3], 3, axisX, axisY, axisZ) > 100 and calculate_finger_angle(fingers[4], 4, axisX, axisY, axisZ) > 100: # checks if the others are curved
-            print(axisY[5], "5", axisY[8], "8")
+    if calculate_angle(fingers[1], 1, axisX, axisY, axisZ) < 20 and calculate_angle(fingers[2], 2, axisX, axisY, axisZ) < 20:#Checks if the index finger and the middle finger are straight
+        if calculate_angle(fingers[3], 3, axisX, axisY, axisZ) > 100 and calculate_angle(fingers[4], 4, axisX, axisY, axisZ) > 100: # checks if the others are curved
+            #print(axisY[5], "5", axisY[8], "8")
             if axisY[8] > axisY[5] and axisY[12] > axisY[9]: # checks if the finger is down
                 meme = "Gallery/meme3.png"    
             else: 
@@ -64,11 +64,11 @@ def meme2and3(): # billie and finger down
             cv2.imshow("Meme", img_meme)
 
 def meme4():
-    if (axisX[0] > face_axisX[3] and axisX[0] < face_axisX[1]) or (axisX[0] > face_axisX[1] and axisX[0] < face_axisX[0]):
-        meme = "Gallery/meme4.png"
-        img_meme = cv2.imread(meme)
-        cv2.imshow("Meme", img_meme)
-
+    if calculate_angle(arms[0], 0, pose_axisX, pose_axisY, pose_axisZ)>120 or calculate_angle(arms[1], 1, pose_axisX, pose_axisY, pose_axisZ)>120:
+        if ((pose_axisX[16] <= pose_axisX[8]+15 and pose_axisX[16] >= pose_axisX[8]-15) and pose_axisX[16] != 0 and (pose_axisY[16] <= pose_axisY[8]+15 and pose_axisY[16] >= pose_axisY[8]-15) and pose_axisY[16] != 0) or ((pose_axisX[15] <= pose_axisX[7]+15 and pose_axisX[15] >= pose_axisX[7]-15) and pose_axisX[15] != 0 and (pose_axisY[15] <= pose_axisY[7]+15 and pose_axisY[15] >= pose_axisY[7]-15) and pose_axisY[15] != 0):
+            meme = "Gallery/meme4.png"
+            img_meme = cv2.imread(meme)
+            cv2.imshow("Meme", img_meme)
 def main():
     global pTime, cTime
     while 1:
@@ -92,6 +92,7 @@ def main():
                 pose_axisX[id] = cx
                 pose_axisY[id] = cy
                 pose_axisZ[id] = cz
+            meme4()
         if results_hands.multi_hand_landmarks:
             for handsl in results_hands.multi_hand_landmarks:
                 mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS, mp_drawing_styles.get_default_hand_landmarks_style(), mp_drawing_styles.get_default_hand_connections_style())
