@@ -65,7 +65,7 @@ def meme2and3(): # billie and finger down
 
 def meme4():
     if calculate_angle(arms[0], 0, pose_axisX, pose_axisY, pose_axisZ)>120 or calculate_angle(arms[1], 1, pose_axisX, pose_axisY, pose_axisZ)>120:
-        if ((pose_axisX[16] <= pose_axisX[8]+15 and pose_axisX[16] >= pose_axisX[8]-15) and pose_axisX[16] != 0 and (pose_axisY[16] <= pose_axisY[8]+15 and pose_axisY[16] >= pose_axisY[8]-15) and pose_axisY[16] != 0) or ((pose_axisX[15] <= pose_axisX[7]+15 and pose_axisX[15] >= pose_axisX[7]-15) and pose_axisX[15] != 0 and (pose_axisY[15] <= pose_axisY[7]+15 and pose_axisY[15] >= pose_axisY[7]-15) and pose_axisY[15] != 0):
+        if ((pose_axisX[16] <= pose_axisX[8]+20 and pose_axisX[16] >= pose_axisX[8]-20) and pose_axisX[16] != 0 and (pose_axisY[16] <= pose_axisY[8]+20 and pose_axisY[16] >= pose_axisY[8]-20) and pose_axisY[16] != 0) or ((pose_axisX[15] <= pose_axisX[7]+20 and pose_axisX[15] >= pose_axisX[7]-20) and pose_axisX[15] != 0 and (pose_axisY[15] <= pose_axisY[7]+20 and pose_axisY[15] >= pose_axisY[7]-20) and pose_axisY[15] != 0):
             meme = "Gallery/meme4.png"
             img_meme = cv2.imread(meme)
             cv2.imshow("Meme", img_meme)
