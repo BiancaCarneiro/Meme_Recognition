@@ -1,6 +1,6 @@
 ![Python version](https://img.shields.io/badge/Python-3.8-green?style=flat&logo=python)
 # Meme Recognition
-Recognizes the user hands and poses and uses that information to indentify a picture.
+Recognizes the user's hands and poses and uses that information to indentify a picture.
 ## Installation
 Mediapipe:
 ```
