@@ -32,16 +32,16 @@ pTime, cTime = 0, 0
 def calculate_angle(array, id, x, y, z):
     #At first, lets find the equations ax+by+c=0
     #print(axisY[int(array[0])])
-    vectorAB = np.array([x[array[0]] - x[array[1]], y[array[0]] - y[array[1]], z[array[0]] - z[array[1]]])
-    vectorBC = np.array([x[array[1]] - x[array[2]], y[array[1]] - y[array[2]], z[array[1]] - z[array[2]]])
+    vectorAB = np.array([x[array[1]] - x[array[0]], y[array[1]] - y[array[0]], z[array[1]] - z[array[0]]])
+    vectorBC = np.array([x[array[2]] - x[array[1]], y[array[2]] - y[array[1]], z[array[2]] - z[array[1]]])
     ABdotBC = np.vdot(vectorAB, vectorBC)
     normAB = np.linalg.norm(vectorAB)
     normBC = np.linalg.norm(vectorBC)
     angle = np.arccos(ABdotBC/(normAB*normBC))
     angle = abs(angle*(180)/(pi))
     #print(angle)
-    #if id == 0 or id == 1:
-        #print(angle, id)      
+    if id == 0 or id == 0:
+        print(angle, id)      
     
     return angle
 
@@ -71,10 +71,10 @@ def meme4and5():
             cv2.imshow("Meme", img_meme)
         if ((pose_axisX[20] <= pose_axisX[10]+30 and pose_axisX[20] >= pose_axisX[10]-30) and pose_axisX[20] != 0 and (pose_axisY[20] <= pose_axisY[10]+30 and pose_axisY[16] >= pose_axisY[10]-30) and pose_axisY[20] != 0) or ((pose_axisX[19] <= pose_axisX[9]+30 and pose_axisX[19] >= pose_axisX[9]-30) and pose_axisX[19] != 0 and (pose_axisY[19] <= pose_axisY[9]+30 and pose_axisY[19] >= pose_axisY[9]-30) and pose_axisY[19] != 0):
             if calculate_angle(fingers[1], 1, axisX, axisY, axisZ) < 20:#Checks if the index finger is straight
-                #if calculate_angle(fingers[2], 2, axisX, axisY, axisZ) > 100 and calculate_angle(fingers[3], 3, axisX, axisY, axisZ) > 100 and calculate_angle(fingers[4], 4, axisX, axisY, axisZ) > 100: # checks if the others are curved
-                meme = "Gallery/meme5.png"
-                img_meme = cv2.imread(meme)
-                cv2.imshow("Meme", img_meme)
+                if calculate_angle(fingers[2], 2, axisX, axisY, axisZ) > 100 and calculate_angle(fingers[3], 3, axisX, axisY, axisZ) > 100 and calculate_angle(fingers[4], 4, axisX, axisY, axisZ) > 100: # checks if the others are curved
+                    meme = "Gallery/meme5.png"
+                    img_meme = cv2.imread(meme)
+                    cv2.imshow("Meme", img_meme)
 def main():
     global pTime, cTime
     while 1:
@@ -103,7 +103,7 @@ def main():
             for handsl in results_hands.multi_hand_landmarks:
                 mpdraw.draw_landmarks(img, handsl, mphands.HAND_CONNECTIONS, mp_drawing_styles.get_default_hand_landmarks_style(), mp_drawing_styles.get_default_hand_connections_style())
                 for id, lm in enumerate(handsl.landmark):
-                    cx, cy, cz = int(lm.x * width), int(lm.y * height), int(lm.z)
+                    cx, cy, cz = int(lm.x * width), int(lm.y * height), int(lm.z * width)
                     axisX[id] = cx
                     axisY[id] = cy
                     axisZ[id] = cz
