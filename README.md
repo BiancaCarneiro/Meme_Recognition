@@ -12,3 +12,6 @@ pip install opencv-python
 ```
 ## Mediapipe references
 https://google.github.io/mediapipe/
+
+## Video
+https://youtu.be/_Qx7CnwHDsw
